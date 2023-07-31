@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+      - nm:/app/node_modules
+    networks:
+      - clew
+    working_dir: /app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: '${POSTGRES_DB}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+    volumes:
+      - quipu:/var/lib/postgresql/data
+    networks:
+      - clew
+
+volumes:
+  quipu:
+  nm:
+
+networks:
+  clew:
+    driver: bridge
