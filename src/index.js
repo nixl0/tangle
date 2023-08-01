@@ -1,9 +1,8 @@
-const express = require('express')
-const { Client } = require('pg')
-require('dotenv').config()
+import express from 'express'
+import pg from 'pg'
+import 'dotenv/config'
 
-
-const logger = require('./logger')
+import logger from './logger'
 
 
 const app = express()
@@ -12,7 +11,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 
-const client = new Client({
+const client = new pg.Client({
 	user: process.env.POSTGRES_USER,
 	password: process.env.POSTGRES_PASSWORD,
 	host: process.env.POSTGRES_HOST,

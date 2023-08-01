@@ -3,9 +3,10 @@
     "version": "1.0.0",
     "description": "Primitive JS framework just to teach myself things",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "NODE_ENV=development node src/index.js"
+        "start": "NODE_ENV=development node --experimental-specifier-resolution=node src/index.js"
     },
     "keywords": [],
     "author": "nixl",

@@ -1,4 +1,4 @@
-const devLogger = require('./devLogger')
+import devLogger from './devLogger'
 
 let logger = null
 
@@ -8,4 +8,4 @@ if (process.env.NODE_ENV === 'development') {
 
 // TODO production logger
 
-module.exports = logger
+export default logger

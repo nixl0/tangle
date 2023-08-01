@@ -1,4 +1,4 @@
-const { createLogger, format, transports } = require('winston')
+import { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf, colorize } = format
 
 const pathToLogDir = './src/logger'
@@ -24,4 +24,4 @@ const devLogger = () => {
     })
 }
 
-module.exports = devLogger
+export default devLogger
