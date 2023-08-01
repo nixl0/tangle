@@ -1,0 +1,18 @@
+{"level":"info","message":"App listening on port 3000"}
+{"level":"info","message":"App listening on port 3000"}
+{"level":"debug","message":"accessed /"}
+{"level":"debug","message":"accessed /"}
+2023-08-01 19:35:31 [right mewo!] info: App listening on port 3000
+2023-08-01 19:35:38 [right mewo!] debug: accessed /
+2023-08-01 19:35:39 [right mewo!] debug: accessed /
+2023-08-01 19:36:01 [mewo!] info: App listening on port 3000
+2023-08-01 19:36:29 [mewo!] debug: accessed /
+2023-08-01 19:36:30 [mewo!] debug: accessed /
+2023-08-01 19:36:30 [mewo!] debug: accessed /
+2023-08-01 19:43:42 [😵‍💫] info: App listening on port 3000
+2023-08-01 19:43:46 [😵‍💫] debug: accessed /
+2023-08-01 19:43:47 [😵‍💫] debug: accessed /
+2023-08-01 19:47:08 [😵‍💫] [32minfo[39m: [32mApp listening on port 3000[39m
+2023-08-01 19:52:11 [😵‍💫] [32minfo[39m: App listening on port 3000
+2023-08-01 19:52:17 [😵‍💫] [34mdebug[39m: accessed /
+2023-08-01 19:52:17 [😵‍💫] [34mdebug[39m: accessed /

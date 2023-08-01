@@ -2,7 +2,15 @@ const express = require('express')
 const { Client } = require('pg')
 require('dotenv').config()
 
+
+const logger = require('./logger')
+
+
 const app = express()
+
+
+const PORT = process.env.PORT || 3000
+
 
 const client = new Client({
 	user: process.env.POSTGRES_USER,
@@ -12,23 +20,50 @@ const client = new Client({
 	database: process.env.POSTGRES_DB
 })
 
-app.get('/', async (req, res) => {
 
+async function startApp() {
+
+	// Connect to database
 	try {
 		await client.connect()
-	}
-	catch (err) {
+	} catch (err) {
 		throw err
 		return res.json({ message: err })
 	}
 
-	await client.end()
-	
-	res.json({ message: 'pg connection SUCCEX' })
+	// Activate server
+	app.listen(PORT, () => {
+		logger.info('App listening on port 3000')
+	})
+
+	handleShutdown()
+}
+
+
+// Call for the 'startApp' function
+startApp()
+
+
+app.get('/', async (req, res) => {
+	// res.json({ message: 'pg connection SUCCESS' })
+
+	logger.debug('accessed /')
+
+	const result = await client.query('SELECT $1::text as message', ['Hello world!'])
+	res.json({ message: result.rows[0].message })
 })
 
-const port = process.env.PORT || 3000
 
-app.listen(port, () => {
-	console.log('App listening on port 3000')
-})
+function handleShutdown() {
+	process.on('SIGINT', async () => {
+		await client.end()
+		logger.info('client disconnected')
+		process.exit(0)
+	})
+
+	process.on('SIGTERM', async () => {
+		await client.end()
+		logger.info('client disconnected')
+		process.exit(0)
+	})
+}
