@@ -15,4 +15,13 @@ server.get('/about', (req, res) => {
     server.sendFile(res, TEMPLATES_DIR + 'about.html')
 })
 
+server.get('/person', (req, res) => {
+    const params = server.queryParams(req)
+    const content = `<h3>name:</h3><span>${params.name}</span><br><h3>surname:</h3><span>${params.surname}</span><br><h3>age:</h3><span>${params.age}</span><br>`
+    server.send(res, {
+        contentType: 'text/html',
+        content
+    })
+})
+
 server.create(PORT)

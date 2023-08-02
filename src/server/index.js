@@ -1,6 +1,7 @@
 import http from 'http'
 import path from 'path'
 import fs from 'fs'
+import qs from 'qs'
 import 'dotenv/config'
 import logger from '../logger'
 
@@ -18,14 +19,21 @@ export default class Server {
         const server = http.createServer((req, res) => {
             let wasFound = false
             
-            for (let { url, method, handler} of this.ROUTES) {
-                if (url === req.url && method === req.method) {
+            for (let { urlPath, method, handler} of this.ROUTES) {
+                // Getting the request URL path
+                const reqUrlPath = req.url.split('?')[0]
+
+                // Call handler() and exit the for loop
+                // if URL and method is among ROUTES
+                if (urlPath === reqUrlPath && method === req.method) {
                     handler(req, res)
                     wasFound = true
                     break
                 }
             }
 
+            // Produce error
+            // if URL and methos is NOT among ROUTES
             if (!wasFound) {
                 logger.error(`Couldn't find template.`)
                 res.writeHead(404)
@@ -49,62 +57,99 @@ export default class Server {
     /**
      * Add a GET route handler. 
      * 
-     * @param {string} url - The route URL path
+     * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    get(url, handler) {
+    get(urlPath, handler) {
         this.ROUTES.push({
-            url: url,
+            urlPath,
             method: 'GET',
-            handler: handler
+            handler
         })
     }
 
     /**
      * Add a POST route handler. 
      * 
-     * @param {string} url - The route URL path
+     * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    post(url, handler) {
+    post(urlPath, handler) {
         this.ROUTES.push({
-            url: url,
+            urlPath,
             method: 'POST',
-            handler: handler
+            handler
         })
     }
 
     /**
      * Add a PUT route handler. 
      * 
-     * @param {string} url - The route URL path
+     * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    put(url, handler) {
+    put(urlPath, handler) {
         this.ROUTES.push({
-            url: url,
+            urlPath,
             method: 'PUT',
-            handler: handler
+            handler
         })
     }
 
     /**
      * Add a DELETE route handler. 
      * 
-     * @param {string} url - The route URL path
+     * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    delete(url, handler) {
+    delete(urlPath, handler) {
         this.ROUTES.push({
-            url: url,
+            urlPath,
             method: 'DELETE',
-            handler: handler
+            handler
         })
+    }
+
+    /**
+     * Parses the query string from the request URL into an object.
+     * 
+     * @param {http.IncomingMessage} req - The request object
+     * @returns {Object} The parsed query params or undefined
+     */
+    queryParams(req) {
+        // Getting the query parameters
+        const query = qs.parse(req.url.split('?')[1])
+
+        if (query) {
+            return query
+        } else {
+            logger.warning('Parsing gave no parameters.')
+        }
     }
 
     // ====================================
     // Response Methods
     // ====================================
+
+    /**
+     * Sends a response with the provided content.
+     * 
+     * @param {http.ServerResponse} res - The response object
+     * @param {Object} options - Options object
+     * @param {string} options.contentType - The content type header value 
+     * @param {string} [options.content] - The content to send
+     */
+    send(res, options) {
+        const contentType = options ? options.contentType : 'text'
+        const content = options ? options.content : undefined
+
+        if (content) {
+            res.writeHead(200, { 'Content-Type': contentType })
+            res.write(content)
+        }
+
+        res.end()
+    }
 
     /**
      * Sends a file to the response.
