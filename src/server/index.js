@@ -1,33 +1,53 @@
 import http from 'http'
 import 'dotenv/config'
 import logger from '../logger'
-import { router, serveTemplate } from './router'
 
-const PORT = process.env.PORT
-
-const routes = {
-    '/': homeHandler,
-    '/about': aboutHandler
-}
-
-function homeHandler(req, res) {
-    serveTemplate(req, res, './src/templates/index.html')
-}
-
-function aboutHandler(req, res) {
-    serveTemplate(req, res, './src/templates/about.html')
-}
-
-const server = http.createServer( (req, res) => {
-    router(req, res, routes)
-})
-
-server.listen(PORT, (err) => {
-    if (err) {
-        logger.fatal(`Server error. ${err}`)
-    } else {
-        logger.info(`Server listening on port ${PORT}`)
+export default class Server {
+    constructor() {
+        this.ROUTES = []
     }
-})
 
-export default server
+    create(port) {
+        const server = http.createServer((req, res) => {
+            let wasFound = false
+            
+            for (let { url, method, handler} of this.ROUTES) {
+                if (url === req.url && method === req.method) {
+                    handler(req, res)
+                    wasFound = true
+                    break
+                }
+            }
+
+            if (!wasFound) {
+                logger.error(`Couldn't find template.`)
+                res.writeHead(404)
+                res.write('Route not defined.')
+            }
+        })
+
+        server.listen(port, (err) => {
+            if (err) {
+                logger.fatal(`Server error. ${err}`)
+            } else {
+                logger.info(`Server listening on port ${port}`)
+            }
+        })
+    }
+
+    get(url, handler) {
+        this.ROUTES.push({
+            url: url,
+            method: 'GET',
+            handler: handler
+        })
+    }
+
+    post(url, handler) {
+        this.ROUTES.push({
+            url: url,
+            method: 'POST',
+            handler: handler
+        })
+    }
+}
