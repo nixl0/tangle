@@ -1,15 +1,13 @@
 import { createLogger, format, transports } from 'winston'
-const { combine, timestamp, label, printf, colorize } = format
+const { combine, timestamp, printf } = format
 
-const myFormat = printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} [${label}] ${level}: ${message}`
+const myFormat = printf(({ level, message, timestamp }) => {
+    return `${timestamp} [${level}]: ${message}`
 })
 
 const defaultParameters = {
-    level: 'debug',
+    level: 'info',
     format: combine(
-        colorize(),
-        label({ label: '😼 mewo' }),
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         myFormat
     ),
@@ -28,12 +26,12 @@ outputToFilesParameters.transports = [
 ]
 
 /**
- * Creates development environment logger
+ * Creates production environment logger
  * 
  * @param {boolean?} outputToFiles Enable output to console AND to files
  * @returns logger
  */
-const devLogger = (outputToFiles = false) => {
+const prodLogger = (outputToFiles = false) => {
     if (outputToFiles) {
         return createLogger(outputToFilesParameters)
     }
@@ -41,4 +39,4 @@ const devLogger = (outputToFiles = false) => {
     return createLogger(defaultParameters)
 }
 
-export default devLogger
+export default prodLogger

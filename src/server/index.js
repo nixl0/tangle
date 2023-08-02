@@ -163,6 +163,8 @@ export default class Server {
                 fs.readFile(options.filePath, (err, data) => {
                     if (err) {
                         logger.error(`Error loading error. ${err}`)
+                        res.end()
+                        return
                     } else {
                         res.writeHead(statusCode, { 'Content-Type': 'text/html' })
                         res.write(data)
