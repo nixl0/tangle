@@ -12,7 +12,7 @@ const devLogger = () => {
         level: 'debug',
         format: combine(
             colorize(),
-            label({ label: '😵‍💫' }),
+            label({ label: '😼 mewo' }),
             timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
             myFormat
         ),
