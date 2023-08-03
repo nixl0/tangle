@@ -60,7 +60,7 @@ export default class Server {
      * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    get(urlPath, handler) {
+    getReq(urlPath, handler) {
         this.ROUTES.push({
             urlPath,
             method: 'GET',
@@ -74,7 +74,7 @@ export default class Server {
      * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    post(urlPath, handler) {
+    postReq(urlPath, handler) {
         this.ROUTES.push({
             urlPath,
             method: 'POST',
@@ -88,7 +88,7 @@ export default class Server {
      * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    put(urlPath, handler) {
+    putReq(urlPath, handler) {
         this.ROUTES.push({
             urlPath,
             method: 'PUT',
@@ -102,7 +102,7 @@ export default class Server {
      * @param {string} urlPath - The route URL path
      * @param {function} handler - The route handler function
      */
-    delete(urlPath, handler) {
+    deleteReq(urlPath, handler) {
         this.ROUTES.push({
             urlPath,
             method: 'DELETE',
@@ -116,7 +116,7 @@ export default class Server {
      * @param {http.IncomingMessage} req - The request object
      * @returns {Object} The parsed query params or undefined
      */
-    queryParams(req) {
+    getQueryParams(req) {
         // Getting the query parameters
         const query = qs.parse(req.url.split('?')[1])
 
@@ -125,6 +125,31 @@ export default class Server {
         } else {
             logger.warning('Parsing gave no parameters.')
         }
+    }
+
+    /**
+     * Parses the request body data.
+     * 
+     * @param {http.IncomingMessage} req - The request object
+     * @param {function} callback - The callback to invoke 
+     * @param {Object|undefined} callback.parsedBody - The parsed request body object
+     */
+    getBodyData(req, callback) {
+        let body = ''
+
+        req.on('data', (chunk) => {
+            body += chunk
+        })
+
+        req.on('end', () => {
+            const parsed = qs.parse(body)
+
+            if (parsed) {
+                callback(parsed)
+            } else {
+                logger.warning(`Parsing gave no body data. ${err}`)
+            }
+        })
     }
 
     // ====================================
