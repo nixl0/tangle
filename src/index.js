@@ -20,8 +20,21 @@ server.getReq('/person/add', (req, res) => {
 })
 
 server.postReq('/person/add', (req, res) => {
-    server.getBodyData(req, body => {
-        const content = `<h3>name:</h3><span>${body.name}</span><br><h3>surname:</h3><span>${body.surname}</span><br><h3>age:</h3><span>${body.age}</span><br>`
+    server.getBodyData(req, ({ fields, files }) => {
+        // TODO make a render method
+
+        let profilePicHTML = ''
+
+        if (files.photo) {
+            const base64 = files.photo.data.toString('base64')
+            profilePicHTML = `<img src="data:image/*;base64,${base64}" />`
+        }
+
+        const content = `
+            <h3>name:</h3><span>${fields.name}</span><br>
+            <h3>surname:</h3><span>${fields.surname}</span><br>
+            <h3>age:</h3><span>${fields.age}</span><br>
+            <h3>photo:</h3>${profilePicHTML}`
         server.send(res, {
             contentType: 'text/html',
             content

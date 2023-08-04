@@ -6,7 +6,7 @@
     <title>Add Person</title>
 </head>
 <body>
-    <form action="/person/add" method="post">
+    <form method="post" enctype="multipart/form-data">
         <p>
             Name:
         </p>
@@ -21,6 +21,11 @@
             Age:
         </p>
         <input type="text" name="age" id="age">
+
+        <p>
+            Photo:
+        </p>
+        <input type="file" name="photo" id="photo"> <!-- here is the photo input -->
 
         <p></p>
 

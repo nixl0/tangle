@@ -2,6 +2,7 @@ import http from 'http'
 import path from 'path'
 import fs from 'fs'
 import qs from 'qs'
+import busboy from 'busboy'
 import 'dotenv/config'
 import logger from '../logger'
 
@@ -135,21 +136,39 @@ export default class Server {
      * @param {Object|undefined} callback.parsedBody - The parsed request body object
      */
     getBodyData(req, callback) {
-        let body = ''
+        const bb = busboy({ headers: req.headers })
 
-        req.on('data', (chunk) => {
-            body += chunk
+        const fields = {}
+        const files = {}
+
+        bb.on('field', (fieldname, val) => {
+            fields[fieldname] = val
         })
 
-        req.on('end', () => {
-            const parsed = qs.parse(body)
+        bb.on('file', (fieldname, file, { filename, encoding, mimeType }) => {
+            let data = []
 
-            if (parsed) {
-                callback(parsed)
-            } else {
-                logger.warning(`Parsing gave no body data. ${err}`)
-            }
+            file.on('data', chunk => {
+                data.push(chunk)
+            })
+            file.on('end', () => {
+                files[fieldname] = {
+                    data: Buffer.concat(data),
+                    filename,
+                    encoding,
+                    mimeType
+                }
+            })
         })
+
+        bb.on('finish', () => {
+            callback({
+                fields,
+                files
+            })
+        })
+
+        req.pipe(bb)
     }
 
     // ====================================
